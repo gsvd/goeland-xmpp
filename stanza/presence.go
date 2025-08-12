@@ -31,6 +31,7 @@ const (
 
 type Presence struct {
 	XMLName  xml.Name     `xml:"presence"`
+	Lang     string       `xml:"http://www.w3.org/XML/1998/namespace lang,attr,omitempty"`
 	ID       string       `xml:"id,attr,omitempty"`
 	Type     PresenceType `xml:"type,attr,omitempty"`
 	From     string       `xml:"from,attr,omitempty"`
@@ -51,6 +52,12 @@ func NewPresence(opts ...PresenceOption) *Presence {
 	}
 
 	return p
+}
+
+func WithPresenceLang(lang string) PresenceOption {
+	return func(p *Presence) {
+		p.Lang = lang
+	}
 }
 
 func WithPresenceType(t PresenceType) PresenceOption {

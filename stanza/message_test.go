@@ -47,28 +47,29 @@ func testMessageMarshal(t *testing.T) {
 		{
 			name: "basic chat message with resource",
 			message: Message{
-				Type:   ChatMessage,
+				Lang:   "en",
 				ID:     fmt.Sprintf("%s-msg0", runUUID),
+				Type:   ChatMessage,
 				From:   "user@example.com",
 				To:     "friend@example.com/tablet.iOS-18_6",
 				Body:   "Hello, world!",
 				Thread: "thread1",
 			},
-			expected: `<message type="chat" id="` + runUUID + `-msg0" from="user@example.com" to="friend@example.com/tablet.iOS-18_6"><body>Hello, world!</body><thread>thread1</thread></message>`,
+			expected: `<message xml:lang="en" id="` + runUUID + `-msg0" type="chat" from="user@example.com" to="friend@example.com/tablet.iOS-18_6"><body>Hello, world!</body><thread>thread1</thread></message>`,
 		},
 		{
 			name: "normal message without thread",
 			message: Message{
-				Type: NormalMessage,
 				ID:   fmt.Sprintf("%s-msg1", runUUID),
+				Type: NormalMessage,
 				From: "sender@example.com",
 				To:   "recipient@example.com",
 				Body: "Test message",
 			},
-			expected: `<message type="normal" id="` + runUUID + `-msg1" from="sender@example.com" to="recipient@example.com"><body>Test message</body></message>`,
+			expected: `<message id="` + runUUID + `-msg1" type="normal" from="sender@example.com" to="recipient@example.com"><body>Test message</body></message>`,
 		},
 		{
-			name: "message without type (should omit type attr)",
+			name: "message without type should omit type attr",
 			message: Message{
 				ID:   fmt.Sprintf("%s-msg2", runUUID),
 				From: "sender@example.com",
@@ -82,7 +83,7 @@ func testMessageMarshal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			data, err := xml.Marshal(&tt.message)
-			require.NoError(t, err, "Failed to marshal message")
+			require.NoError(t, err, "failed to marshal message")
 			assert.Equal(t, tt.expected, string(data))
 		})
 	}
@@ -123,14 +124,14 @@ func testMessageUnmarshal(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var msg Message
 			err := xml.Unmarshal([]byte(tt.xml), &msg)
-			require.NoError(t, err, "Failed to unmarshal message")
+			require.NoError(t, err, "failed to unmarshal message")
 
-			assert.Equal(t, tt.expected.Type, msg.Type, "Type mismatch")
-			assert.Equal(t, tt.expected.ID, msg.ID, "ID mismatch")
-			assert.Equal(t, tt.expected.From, msg.From, "From mismatch")
-			assert.Equal(t, tt.expected.To, msg.To, "To mismatch")
-			assert.Equal(t, tt.expected.Body, msg.Body, "Body mismatch")
-			assert.Equal(t, tt.expected.Thread, msg.Thread, "Thread mismatch")
+			assert.Equal(t, tt.expected.Type, msg.Type, "type mismatch")
+			assert.Equal(t, tt.expected.ID, msg.ID, "id mismatch")
+			assert.Equal(t, tt.expected.From, msg.From, "from mismatch")
+			assert.Equal(t, tt.expected.To, msg.To, "to mismatch")
+			assert.Equal(t, tt.expected.Body, msg.Body, "body mismatch")
+			assert.Equal(t, tt.expected.Thread, msg.Thread, "thread mismatch")
 		})
 	}
 }

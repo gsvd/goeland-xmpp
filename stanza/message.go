@@ -12,11 +12,11 @@ type MessageOption func(*Message)
 
 type Message struct {
 	XMLName xml.Name    `xml:"message"`
+	Lang    string      `xml:"http://www.w3.org/XML/1998/namespace lang,attr,omitempty"`
 	ID      string      `xml:"id,attr,omitempty"`
 	Type    MessageType `xml:"type,attr,omitempty"`
 	From    string      `xml:"from,attr,omitempty"`
 	To      string      `xml:"to,attr,omitempty"`
-	Lang    string      `xml:"xml:lang,attr,omitempty"`
 	Body    string      `xml:"body,omitempty"`
 	Thread  string      `xml:"thread,omitempty"`
 }
@@ -40,6 +40,12 @@ func NewMessage(opts ...MessageOption) *Message {
 	}
 
 	return msg
+}
+
+func WithMessageLang(lang string) MessageOption {
+	return func(m *Message) {
+		m.Lang = lang
+	}
 }
 
 func WithMessageType(t MessageType) MessageOption {
