@@ -1,0 +1,52 @@
+# .copilot-todo.yaml
+# This file is used by GitHub Copilot to track project progress and update the main todo.md file.
+# It should be kept in sync with the actual project state and updated as features are completed or added.
+# Place this file in the hidden project folder `.copilot/`.
+
+version: 1
+project: goeland-xmpp
+release: v0.1.0
+
+features:
+  - name: JID parsing and validation
+    spec: RFC 7622
+    status: done
+  - name: Message stanza (basic send/receive, marshal/unmarshal)
+    spec: RFC 6121, RFC 6120
+    status: done
+  - name: Message type support
+    details: chat, groupchat, headline, normal, error
+    status: done
+  - name: Unit tests for address parsing and message stanzas
+    status: done
+  - name: XMPP stream handling
+    details: open/close XML streams, <stream:stream> root
+    status: todo
+  - name: TCP connection to XMPP server
+    details: connect, send/receive XML
+    status: todo
+  - name: Basic authentication
+    details: SASL PLAIN or ANONYMOUS
+    status: todo
+  - name: Presence stanza
+    details: send/receive <presence/>
+    status: todo
+  - name: IQ stanza
+    details: basic, e.g., ping, version
+    status: todo
+  - name: Basic event loop
+    details: read/write stanzas, dispatch handlers
+    status: todo
+  - name: Error handling for stream and stanza parsing
+    status: todo
+  - name: Minimal example
+    details: connect, authenticate, send/receive message, presence
+    status: todo
+
+progress:
+  percent: 20
+  notes: |
+    JID and message stanzas are implemented. Stream, connection, authentication, presence, and IQ are next.
+
+# Update this file as you complete features or add new requirements.
+# Copilot will use this file to keep todo.md up to date.
