@@ -12,8 +12,8 @@ type MessageOption func(*Message)
 
 type Message struct {
 	XMLName xml.Name    `xml:"message"`
-	Type    MessageType `xml:"type,attr,omitempty"`
 	ID      string      `xml:"id,attr,omitempty"`
+	Type    MessageType `xml:"type,attr,omitempty"`
 	From    string      `xml:"from,attr,omitempty"`
 	To      string      `xml:"to,attr,omitempty"`
 	Lang    string      `xml:"xml:lang,attr,omitempty"`
@@ -31,8 +31,8 @@ const (
 
 func NewMessage(opts ...MessageOption) *Message {
 	msg := &Message{
-		Type: NormalMessage,
 		ID:   uuid.NewString(),
+		Type: NormalMessage,
 	}
 
 	for _, opt := range opts {
@@ -42,31 +42,31 @@ func NewMessage(opts ...MessageOption) *Message {
 	return msg
 }
 
-func WithType(t MessageType) MessageOption {
+func WithMessageType(t MessageType) MessageOption {
 	return func(m *Message) {
 		m.Type = t
 	}
 }
 
-func WithTo(to address.Address) MessageOption {
-	return func(m *Message) {
-		m.To = to.String()
-	}
-}
-
-func WithFrom(from address.Address) MessageOption {
+func WithMessageFrom(from address.Address) MessageOption {
 	return func(m *Message) {
 		m.From = from.String()
 	}
 }
 
-func WithBody(body string) MessageOption {
+func WithMessageTo(to address.Address) MessageOption {
+	return func(m *Message) {
+		m.To = to.String()
+	}
+}
+
+func WithMessageBody(body string) MessageOption {
 	return func(m *Message) {
 		m.Body = body
 	}
 }
 
-func WithThread(thread string) MessageOption {
+func WithMessageThread(thread string) MessageOption {
 	return func(m *Message) {
 		m.Thread = thread
 	}
@@ -92,7 +92,11 @@ func (t *MessageType) UnmarshalXMLAttr(attr xml.Attr) error {
 
 func (t MessageType) MarshalText() ([]byte, error) {
 	switch t {
-	case ChatMessage, ErrorMessage, GroupChatMessage, HeadlineMessage, NormalMessage:
+	case ChatMessage,
+		ErrorMessage,
+		GroupChatMessage,
+		HeadlineMessage,
+		NormalMessage:
 		return []byte(t), nil
 	default:
 		return []byte(NormalMessage), nil
