@@ -7,15 +7,16 @@
 - [x] JID parsing and validation (RFC 7622)
 - [x] Message stanza (basic send/receive, marshal/unmarshal) (RFC 6121, RFC 6120)
 - [x] Message type support: chat, groupchat, headline, normal, error
-- [x] Unit tests for address parsing and message stanzas
+- [x] Presence stanza (send/receive, marshal/unmarshal, types, show, status, priority)
+- [x] IQ stanza (bind, types, marshal/unmarshal)
+- [x] Unit tests for address, message, presence, and IQ stanzas
 
 ### Features to implement
 
 - [ ] XMPP stream handling (open/close XML streams, <stream:stream> root)
 - [ ] TCP connection to XMPP server (connect, send/receive XML)
 - [ ] Basic authentication (SASL PLAIN or ANONYMOUS)
-- [ ] Presence stanza (send/receive <presence/>)
-- [ ] IQ stanza (basic, e.g., ping, version)
+- [ ] IQ stanza (ping, version)
 - [ ] Basic event loop (read/write stanzas, dispatch handlers)
 - [ ] Error handling for stream and stanza parsing
 - [ ] Minimal example: connect, authenticate, send/receive message, presence
@@ -24,8 +25,8 @@
 
 ## Estimated Progress
 
-- **Current completion:** 20% for a minimal XMPP chat client (v0.1)
-- **Notes:** JID and message stanzas are implemented. Stream, connection, authentication, presence, and IQ are next.
+- **Current completion:** 40% for a minimal XMPP chat client (v0.1)
+- **Notes:** JID, message, presence, and IQ stanzas are implemented with tests. Stream handling, connection, authentication, and advanced IQ features are next.
 
 ---
 
