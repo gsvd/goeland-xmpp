@@ -5,7 +5,11 @@ import (
 )
 
 func main() {
-	a, err := address.Parse("test@gsvd.dev/client")
+	a, err := address.New(
+		address.WithLocal("test"),
+		address.WithDomain("gsvd.dev"),
+		address.WithResource("client"),
+	)
 	if err != nil {
 		panic(err)
 	}

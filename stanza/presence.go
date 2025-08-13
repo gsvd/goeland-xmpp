@@ -3,13 +3,25 @@ package stanza
 import (
 	"encoding/xml"
 
-	"github.com/google/uuid"
 	"github.com/gsvd/goeland-xmpp/address"
+	"github.com/gsvd/goeland-xmpp/internal/id"
 )
 
 type PresenceType string
 type PresenceShow string
 type PresenceOption func(*Presence)
+
+type Presence struct {
+	XMLName  xml.Name     `xml:"presence"`
+	Lang     string       `xml:"http://www.w3.org/XML/1998/namespace lang,attr,omitempty"`
+	ID       string       `xml:"id,attr,omitempty"`
+	Type     PresenceType `xml:"type,attr,omitempty"`
+	From     string       `xml:"from,attr,omitempty"`
+	To       string       `xml:"to,attr,omitempty"`
+	Show     PresenceShow `xml:"show,omitempty"`
+	Status   string       `xml:"status,omitempty"`
+	Priority int          `xml:"priority,omitempty"`
+}
 
 const (
 	PresenceTypeAvailable    PresenceType = ""
@@ -29,21 +41,9 @@ const (
 	ShowXA   PresenceShow = "xa"
 )
 
-type Presence struct {
-	XMLName  xml.Name     `xml:"presence"`
-	Lang     string       `xml:"http://www.w3.org/XML/1998/namespace lang,attr,omitempty"`
-	ID       string       `xml:"id,attr,omitempty"`
-	Type     PresenceType `xml:"type,attr,omitempty"`
-	From     string       `xml:"from,attr,omitempty"`
-	To       string       `xml:"to,attr,omitempty"`
-	Show     PresenceShow `xml:"show,omitempty"`
-	Status   string       `xml:"status,omitempty"`
-	Priority int          `xml:"priority,omitempty"`
-}
-
 func NewPresence(opts ...PresenceOption) *Presence {
 	p := &Presence{
-		ID:   uuid.NewString(),
+		ID:   id.New(),
 		Type: PresenceTypeAvailable,
 	}
 
@@ -92,6 +92,12 @@ func WithPresenceStatus(status string) PresenceOption {
 
 func WithPresencePriority(priority int) PresenceOption {
 	return func(p *Presence) {
+		if priority < -128 {
+			priority = -128
+		}
+		if priority > 127 {
+			priority = 127
+		}
 		p.Priority = priority
 	}
 }

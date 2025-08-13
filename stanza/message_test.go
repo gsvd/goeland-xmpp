@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gsvd/goeland-xmpp/internal/id"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -37,7 +37,7 @@ func testMessageTypes(t *testing.T) {
 }
 
 func testMessageMarshal(t *testing.T) {
-	runUUID := uuid.NewString()
+	runUUID := id.New()
 
 	tests := []struct {
 		name     string
@@ -90,7 +90,7 @@ func testMessageMarshal(t *testing.T) {
 }
 
 func testMessageUnmarshal(t *testing.T) {
-	runUUID := uuid.NewString()
+	runUUID := id.New()
 
 	tests := []struct {
 		name     string

@@ -3,8 +3,8 @@ package stanza
 import (
 	"encoding/xml"
 
-	"github.com/google/uuid"
 	"github.com/gsvd/goeland-xmpp/address"
+	"github.com/gsvd/goeland-xmpp/internal/id"
 )
 
 type MessageType string
@@ -31,7 +31,7 @@ const (
 
 func NewMessage(opts ...MessageOption) *Message {
 	msg := &Message{
-		ID:   uuid.NewString(),
+		ID:   id.New(),
 		Type: NormalMessage,
 	}
 

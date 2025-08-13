@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/gsvd/goeland-xmpp/internal/id"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -60,7 +60,7 @@ func testPresenceShowStates(t *testing.T) {
 }
 
 func testPresenceMarshal(t *testing.T) {
-	runUUID := uuid.NewString()
+	runUUID := id.New()
 
 	tests := []struct {
 		name     string
@@ -164,7 +164,7 @@ func testPresenceMarshal(t *testing.T) {
 }
 
 func testPresenceUnmarshal(t *testing.T) {
-	runUUID := uuid.NewString()
+	runUUID := id.New()
 
 	tests := []struct {
 		name     string

@@ -10,6 +10,12 @@ import (
 	"golang.org/x/net/idna"
 )
 
+type Address struct {
+	local    string
+	domain   string
+	resource string
+}
+
 var (
 	ErrInvalidAddressFormat = errors.New("invalid address format")
 	ErrAddressIsEmpty       = errors.New("address is empty")
@@ -22,59 +28,85 @@ var (
 	ErrMissingDomainPart   = errors.New("missing domain part")
 )
 
-type Address struct {
-	// local identifier (optional)
-	local string
-	// domain identifier (required)
-	domain string
-	// resource identifier (optional)
-	resource string
+type Option func(*Address)
+
+func WithLocal(local string) Option {
+	return func(a *Address) {
+		a.local = local
+	}
 }
 
-func new(local, domain, resource string) (Address, error) {
-	local, err := normalizeLocal(local)
-	if err != nil {
-		return Address{}, fmt.Errorf("invalid local part: %w", err)
+func WithDomain(domain string) Option {
+	return func(a *Address) {
+		a.domain = domain
 	}
-
-	domain, err = normalizeDomain(domain)
-	if err != nil {
-		return Address{}, fmt.Errorf("invalid domain part: %w", err)
-	}
-
-	resource, err = normalizeResource(resource)
-	if err != nil {
-		return Address{}, fmt.Errorf("invalid resource part: %w", err)
-	}
-
-	return Address{
-		local:    local,
-		domain:   domain,
-		resource: resource,
-	}, nil
 }
 
-func Parse(addr string) (Address, error) {
-	local, domain, resource, err := decompose(addr)
-	if err != nil {
-		return Address{}, err
+func WithResource(resource string) Option {
+	return func(a *Address) {
+		a.resource = resource
 	}
-
-	address, err := new(local, domain, resource)
-	if err != nil {
-		return Address{}, err
-	}
-
-	return address, nil
 }
 
-func MustParse(addr string) Address {
-	local, domain, resource, err := decompose(addr)
-	if err != nil {
-		panic(err)
+func New(opts ...Option) (*Address, error) {
+	a := &Address{}
+
+	for _, opt := range opts {
+		opt(a)
 	}
 
-	address, err := new(local, domain, resource)
+	if a.domain == "" {
+		return nil, ErrMissingDomainPart
+	}
+
+	if a.local != "" {
+		l, err := normalizeLocal(a.local)
+		if err != nil {
+			return nil, fmt.Errorf("invalid local part: %w", err)
+		}
+		a.local = l
+	}
+
+	d, err := normalizeDomain(a.domain)
+	if err != nil {
+		return nil, fmt.Errorf("invalid domain part: %w", err)
+	}
+	a.domain = d
+
+	if a.resource != "" {
+		r, err := normalizeResource(a.resource)
+		if err != nil {
+			return nil, fmt.Errorf("invalid resource part: %w", err)
+		}
+		a.resource = r
+	}
+
+	return a, nil
+}
+
+func Parse(s string) (*Address, error) {
+	var opts []Option
+
+	local, domain, resource, err := decompose(s)
+	if err != nil {
+		return nil, err
+	}
+
+	if local != "" {
+		opts = append(opts, WithLocal(local))
+	}
+
+	opts = append(opts, WithDomain(domain))
+
+	if resource != "" {
+		opts = append(opts, WithResource(resource))
+	}
+
+	return New(opts...)
+}
+
+func MustParse(addr string) *Address {
+	address, err := Parse(addr)
 	if err != nil {
 		panic(err)
 	}
@@ -90,8 +122,6 @@ func decompose(addr string) (local string, domain string, resource string, err e
 
 	sep := strings.LastIndex(addr, "/")
 	if sep > -1 {
-		// Trailing slash is present, but resource is missing
-		// e.g. user@example.com/
 		if sep == len(addr)-1 {
 			err = ErrMissingResourcePart
 			return
@@ -103,14 +133,11 @@ func decompose(addr string) (local string, domain string, resource string, err e
 	sep = strings.LastIndex(addr, "@")
 	switch {
 	case sep == -1:
-		// No @, entire string is domain
 		domain = addr
 	case sep == len(addr)-1:
-		// @ at end, e.g. user@
 		err = ErrMissingDomainPart
 		return
 	case sep == 0:
-		// @ at start, e.g. @example.com
 		err = ErrMissingLocalPart
 		return
 	default:
@@ -121,7 +148,6 @@ func decompose(addr string) (local string, domain string, resource string, err e
 	return
 }
 
-// TODO: Implement
 func normalizeLocal(local string) (string, error) {
 	if len(local) > 1023 {
 		return local, ErrPartLenIsTooLong
@@ -171,32 +197,42 @@ func normalizeDomain(domain string) (string, error) {
 
 	domain = strings.TrimSuffix(domain, ".")
 
-	domain, err := idna.Display.ToUnicode(domain)
+	d, err := idna.Display.ToUnicode(domain)
 	if err != nil {
 		return domain, err
 	}
 
-	if len(domain) > 1023 {
-		return domain, ErrPartLenIsTooLong
+	if len(d) > 1023 {
+		return d, ErrPartLenIsTooLong
 	}
 
-	return domain, nil
+	return d, nil
 }
 
-// TODO: Implement
 func normalizeResource(resource string) (string, error) {
 	if len(resource) > 1023 {
 		return resource, ErrPartLenIsTooLong
 	}
 
+	if !utf8.ValidString(resource) {
+		return resource, ErrPartInvalidUTF8
+	}
+
 	return resource, nil
 }
 
-func (a Address) Equal(b Address) bool {
+func (a *Address) Equal(b *Address) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
 	return a.local == b.local && a.domain == b.domain && a.resource == b.resource
 }
 
-func (a Address) String() string {
+func (a *Address) String() string {
+	if a == nil {
+		return ""
+	}
+
 	var b strings.Builder
 	b.Grow(len(a.local) + len(a.domain) + len(a.resource) + 2)
 
@@ -218,21 +254,30 @@ func (a Address) String() string {
 	return b.String()
 }
 
-func (a Address) Bare() Address {
-	return Address{
+func (a *Address) Bare() *Address {
+	if a == nil {
+		return nil
+	}
+	return &Address{
 		local:  a.local,
 		domain: a.domain,
 	}
 }
 
-func (a Address) Local() Address {
-	return Address{
+func (a *Address) Local() *Address {
+	if a == nil {
+		return nil
+	}
+	return &Address{
 		local: a.local,
 	}
 }
 
-func (a Address) Domain() Address {
-	return Address{
+func (a *Address) Domain() *Address {
+	if a == nil {
+		return nil
+	}
+	return &Address{
 		domain: a.domain,
 	}
 }
