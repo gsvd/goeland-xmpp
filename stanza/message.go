@@ -31,7 +31,7 @@ const (
 
 func NewMessage(opts ...MessageOption) *Message {
 	msg := &Message{
-		ID:   id.New(),
+		ID:   id.NewUUID(),
 		Type: NormalMessage,
 	}
 
@@ -40,6 +40,22 @@ func NewMessage(opts ...MessageOption) *Message {
 	}
 
 	return msg
+}
+
+func NewMessageChat(opts ...MessageOption) *Message {
+	return NewMessage(append(opts, WithMessageType(ChatMessage))...)
+}
+
+func NewMessageError(opts ...MessageOption) *Message {
+	return NewMessage(append(opts, WithMessageType(ErrorMessage))...)
+}
+
+func NewMessageGroupChat(opts ...MessageOption) *Message {
+	return NewMessage(append(opts, WithMessageType(GroupChatMessage))...)
+}
+
+func NewMessageNormal(opts ...MessageOption) *Message {
+	return NewMessage(append(opts, WithMessageType(NormalMessage))...)
 }
 
 func WithMessageLang(lang string) MessageOption {

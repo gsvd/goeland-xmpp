@@ -37,7 +37,7 @@ func testMessageTypes(t *testing.T) {
 }
 
 func testMessageMarshal(t *testing.T) {
-	runUUID := id.New()
+	runHex := id.NewShortHex()
 
 	tests := []struct {
 		name     string
@@ -48,35 +48,35 @@ func testMessageMarshal(t *testing.T) {
 			name: "basic chat message with resource",
 			message: Message{
 				Lang:   "en",
-				ID:     fmt.Sprintf("%s-msg0", runUUID),
+				ID:     fmt.Sprintf("%s-msg0", runHex),
 				Type:   ChatMessage,
 				From:   "user@example.com",
 				To:     "friend@example.com/tablet.iOS-18_6",
 				Body:   "Hello, world!",
 				Thread: "thread1",
 			},
-			expected: `<message xml:lang="en" id="` + runUUID + `-msg0" type="chat" from="user@example.com" to="friend@example.com/tablet.iOS-18_6"><body>Hello, world!</body><thread>thread1</thread></message>`,
+			expected: `<message xml:lang="en" id="` + runHex + `-msg0" type="chat" from="user@example.com" to="friend@example.com/tablet.iOS-18_6"><body>Hello, world!</body><thread>thread1</thread></message>`,
 		},
 		{
 			name: "normal message without thread",
 			message: Message{
-				ID:   fmt.Sprintf("%s-msg1", runUUID),
+				ID:   fmt.Sprintf("%s-msg1", runHex),
 				Type: NormalMessage,
 				From: "sender@example.com",
 				To:   "recipient@example.com",
 				Body: "Test message",
 			},
-			expected: `<message id="` + runUUID + `-msg1" type="normal" from="sender@example.com" to="recipient@example.com"><body>Test message</body></message>`,
+			expected: `<message id="` + runHex + `-msg1" type="normal" from="sender@example.com" to="recipient@example.com"><body>Test message</body></message>`,
 		},
 		{
 			name: "message without type should omit type attr",
 			message: Message{
-				ID:   fmt.Sprintf("%s-msg2", runUUID),
+				ID:   fmt.Sprintf("%s-msg2", runHex),
 				From: "sender@example.com",
 				To:   "recipient@example.com",
 				Body: "No type",
 			},
-			expected: `<message id="` + runUUID + `-msg2" from="sender@example.com" to="recipient@example.com"><body>No type</body></message>`,
+			expected: `<message id="` + runHex + `-msg2" from="sender@example.com" to="recipient@example.com"><body>No type</body></message>`,
 		},
 	}
 
@@ -90,7 +90,7 @@ func testMessageMarshal(t *testing.T) {
 }
 
 func testMessageUnmarshal(t *testing.T) {
-	runUUID := id.New()
+	runHex := id.NewShortHex()
 
 	tests := []struct {
 		name     string
@@ -99,10 +99,10 @@ func testMessageUnmarshal(t *testing.T) {
 	}{
 		{
 			name: "basic chat message",
-			xml:  `<message type="chat" id="` + runUUID + `-msg0" from="user@example.com" to="friend@example.com"><body>Hello!</body><thread>t1</thread></message>`,
+			xml:  `<message type="chat" id="` + runHex + `-msg0" from="user@example.com" to="friend@example.com"><body>Hello!</body><thread>t1</thread></message>`,
 			expected: Message{
 				Type:   ChatMessage,
-				ID:     fmt.Sprintf("%s-msg0", runUUID),
+				ID:     fmt.Sprintf("%s-msg0", runHex),
 				From:   "user@example.com",
 				To:     "friend@example.com",
 				Body:   "Hello!",
@@ -111,9 +111,9 @@ func testMessageUnmarshal(t *testing.T) {
 		},
 		{
 			name: "message without type",
-			xml:  `<message id="` + runUUID + `-msg1" from="sender@example.com"><body>Test</body></message>`,
+			xml:  `<message id="` + runHex + `-msg1" from="sender@example.com"><body>Test</body></message>`,
 			expected: Message{
-				ID:   fmt.Sprintf("%s-msg1", runUUID),
+				ID:   fmt.Sprintf("%s-msg1", runHex),
 				From: "sender@example.com",
 				Body: "Test",
 			},

@@ -43,7 +43,7 @@ const (
 
 func NewPresence(opts ...PresenceOption) *Presence {
 	p := &Presence{
-		ID:   id.New(),
+		ID:   id.NewUUID(),
 		Type: PresenceTypeAvailable,
 	}
 

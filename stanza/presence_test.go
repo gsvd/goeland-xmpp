@@ -60,7 +60,7 @@ func testPresenceShowStates(t *testing.T) {
 }
 
 func testPresenceMarshal(t *testing.T) {
-	runUUID := id.New()
+	runHex := id.NewShortHex()
 
 	tests := []struct {
 		name     string
@@ -70,87 +70,87 @@ func testPresenceMarshal(t *testing.T) {
 		{
 			name: "available presence with show and status no type attr",
 			presence: Presence{
-				ID:     fmt.Sprintf("%s-pres0", runUUID),
+				ID:     fmt.Sprintf("%s-pres0", runHex),
 				Type:   PresenceTypeAvailable,
 				From:   "user@example.com/desktop",
 				Show:   ShowChat,
 				Status: "Ready to chat",
 			},
-			expected: `<presence id="` + runUUID + `-pres0" from="user@example.com/desktop"><show>chat</show><status>Ready to chat</status></presence>`,
+			expected: `<presence id="` + runHex + `-pres0" from="user@example.com/desktop"><show>chat</show><status>Ready to chat</status></presence>`,
 		},
 		{
 			name: "unavailable presence",
 			presence: Presence{
-				ID:   fmt.Sprintf("%s-pres1", runUUID),
+				ID:   fmt.Sprintf("%s-pres1", runHex),
 				Type: PresenceTypeUnavailable,
 				From: "user@example.com/mobile",
 			},
-			expected: `<presence id="` + runUUID + `-pres1" type="unavailable" from="user@example.com/mobile"></presence>`,
+			expected: `<presence id="` + runHex + `-pres1" type="unavailable" from="user@example.com/mobile"></presence>`,
 		},
 		{
 			name: "presence with priority",
 			presence: Presence{
 				Lang:     "en",
-				ID:       fmt.Sprintf("%s-pres2", runUUID),
+				ID:       fmt.Sprintf("%s-pres2", runHex),
 				Type:     PresenceTypeAvailable,
 				From:     "user@example.com/tablet",
 				Show:     ShowAway,
 				Status:   "Away from keyboard",
 				Priority: 5,
 			},
-			expected: `<presence xml:lang="en" id="` + runUUID + `-pres2" from="user@example.com/tablet"><show>away</show><status>Away from keyboard</status><priority>5</priority></presence>`,
+			expected: `<presence xml:lang="en" id="` + runHex + `-pres2" from="user@example.com/tablet"><show>away</show><status>Away from keyboard</status><priority>5</priority></presence>`,
 		},
 		{
 			name: "subscribe presence",
 			presence: Presence{
-				ID:   fmt.Sprintf("%s-pres3", runUUID),
+				ID:   fmt.Sprintf("%s-pres3", runHex),
 				Type: PresenceTypeSubscribe,
 				From: "user@example.com",
 				To:   "friend@example.com",
 			},
-			expected: `<presence id="` + runUUID + `-pres3" type="subscribe" from="user@example.com" to="friend@example.com"></presence>`,
+			expected: `<presence id="` + runHex + `-pres3" type="subscribe" from="user@example.com" to="friend@example.com"></presence>`,
 		},
 		{
 			name: "presence with negative priority no type attr",
 			presence: Presence{
-				ID:       fmt.Sprintf("%s-pres4", runUUID),
+				ID:       fmt.Sprintf("%s-pres4", runHex),
 				Type:     PresenceTypeAvailable,
 				From:     "bot@example.com/automation",
 				Status:   "Automated client - do not disturb",
 				Priority: -1,
 			},
-			expected: `<presence id="` + runUUID + `-pres4" from="bot@example.com/automation"><status>Automated client - do not disturb</status><priority>-1</priority></presence>`,
+			expected: `<presence id="` + runHex + `-pres4" from="bot@example.com/automation"><status>Automated client - do not disturb</status><priority>-1</priority></presence>`,
 		},
 		{
 			name: "presence with dnd show no type attr",
 			presence: Presence{
-				ID:     fmt.Sprintf("%s-pres5", runUUID),
+				ID:     fmt.Sprintf("%s-pres5", runHex),
 				Type:   PresenceTypeAvailable,
 				From:   "user@example.com/work",
 				Show:   ShowDND,
 				Status: "In a meeting",
 			},
-			expected: `<presence id="` + runUUID + `-pres5" from="user@example.com/work"><show>dnd</show><status>In a meeting</status></presence>`,
+			expected: `<presence id="` + runHex + `-pres5" from="user@example.com/work"><show>dnd</show><status>In a meeting</status></presence>`,
 		},
 		{
 			name: "presence with xa show no type attr",
 			presence: Presence{
-				ID:     fmt.Sprintf("%s-pres6", runUUID),
+				ID:     fmt.Sprintf("%s-pres6", runHex),
 				Type:   PresenceTypeAvailable,
 				From:   "user@example.com/laptop",
 				Show:   ShowXA,
 				Status: "Extended away",
 			},
-			expected: `<presence id="` + runUUID + `-pres6" from="user@example.com/laptop"><show>xa</show><status>Extended away</status></presence>`,
+			expected: `<presence id="` + runHex + `-pres6" from="user@example.com/laptop"><show>xa</show><status>Extended away</status></presence>`,
 		},
 		{
 			name: "presence with zero priority no type attr",
 			presence: Presence{
-				ID:       fmt.Sprintf("%s-pres7", runUUID),
+				ID:       fmt.Sprintf("%s-pres7", runHex),
 				From:     "user@example.com/client",
 				Priority: 0,
 			},
-			expected: `<presence id="` + runUUID + `-pres7" from="user@example.com/client"></presence>`,
+			expected: `<presence id="` + runHex + `-pres7" from="user@example.com/client"></presence>`,
 		},
 	}
 
@@ -164,7 +164,7 @@ func testPresenceMarshal(t *testing.T) {
 }
 
 func testPresenceUnmarshal(t *testing.T) {
-	runUUID := id.New()
+	runHex := id.NewShortHex()
 
 	tests := []struct {
 		name     string
@@ -173,9 +173,9 @@ func testPresenceUnmarshal(t *testing.T) {
 	}{
 		{
 			name: "available presence with show no type attr means available",
-			xml:  `<presence id="` + runUUID + `-pres0" from="user@example.com/resource"><show>chat</show><status>Available</status></presence>`,
+			xml:  `<presence id="` + runHex + `-pres0" from="user@example.com/resource"><show>chat</show><status>Available</status></presence>`,
 			expected: Presence{
-				ID:     fmt.Sprintf("%s-pres0", runUUID),
+				ID:     fmt.Sprintf("%s-pres0", runHex),
 				Type:   PresenceTypeAvailable,
 				From:   "user@example.com/resource",
 				Show:   ShowChat,
@@ -184,18 +184,18 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "unavailable presence",
-			xml:  `<presence id="` + runUUID + `-pres1" type="unavailable" from="user@example.com/mobile"></presence>`,
+			xml:  `<presence id="` + runHex + `-pres1" type="unavailable" from="user@example.com/mobile"></presence>`,
 			expected: Presence{
-				ID:   fmt.Sprintf("%s-pres1", runUUID),
+				ID:   fmt.Sprintf("%s-pres1", runHex),
 				Type: PresenceTypeUnavailable,
 				From: "user@example.com/mobile",
 			},
 		},
 		{
 			name: "presence with priority no type attr means available",
-			xml:  `<presence id="` + runUUID + `-pres2" from="user@example.com"><show>away</show><priority>10</priority></presence>`,
+			xml:  `<presence id="` + runHex + `-pres2" from="user@example.com"><show>away</show><priority>10</priority></presence>`,
 			expected: Presence{
-				ID:       fmt.Sprintf("%s-pres2", runUUID),
+				ID:       fmt.Sprintf("%s-pres2", runHex),
 				Type:     PresenceTypeAvailable,
 				From:     "user@example.com",
 				Show:     ShowAway,
@@ -204,9 +204,9 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "subscribe presence",
-			xml:  `<presence id="` + runUUID + `-pres3" type="subscribe" from="requester@example.com" to="target@example.com"></presence>`,
+			xml:  `<presence id="` + runHex + `-pres3" type="subscribe" from="requester@example.com" to="target@example.com"></presence>`,
 			expected: Presence{
-				ID:   fmt.Sprintf("%s-pres3", runUUID),
+				ID:   fmt.Sprintf("%s-pres3", runHex),
 				Type: PresenceTypeSubscribe,
 				From: "requester@example.com",
 				To:   "target@example.com",
@@ -214,9 +214,9 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "presence with negative priority no type attr means available",
-			xml:  `<presence id="` + runUUID + `-pres4"><priority>-5</priority><status>Bot</status></presence>`,
+			xml:  `<presence id="` + runHex + `-pres4"><priority>-5</priority><status>Bot</status></presence>`,
 			expected: Presence{
-				ID:       fmt.Sprintf("%s-pres4", runUUID),
+				ID:       fmt.Sprintf("%s-pres4", runHex),
 				Type:     PresenceTypeAvailable,
 				Status:   "Bot",
 				Priority: -5,
@@ -224,10 +224,10 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "presence with dnd no type attr means available",
-			xml:  `<presence xml:lang="en" id="` + runUUID + `-pres5"><show>dnd</show><status>Busy</status></presence>`,
+			xml:  `<presence xml:lang="en" id="` + runHex + `-pres5"><show>dnd</show><status>Busy</status></presence>`,
 			expected: Presence{
 				Lang:   "en",
-				ID:     fmt.Sprintf("%s-pres5", runUUID),
+				ID:     fmt.Sprintf("%s-pres5", runHex),
 				Type:   PresenceTypeAvailable,
 				Show:   ShowDND,
 				Status: "Busy",
@@ -235,18 +235,18 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "presence with xa no type attr means available",
-			xml:  `<presence id="` + runUUID + `-pres6"><show>xa</show></presence>`,
+			xml:  `<presence id="` + runHex + `-pres6"><show>xa</show></presence>`,
 			expected: Presence{
-				ID:   fmt.Sprintf("%s-pres6", runUUID),
+				ID:   fmt.Sprintf("%s-pres6", runHex),
 				Type: PresenceTypeAvailable,
 				Show: ShowXA,
 			},
 		},
 		{
 			name: "error presence type",
-			xml:  `<presence id="` + runUUID + `-pres7" type="error" from="user@example.com" to="invalid@example.com"></presence>`,
+			xml:  `<presence id="` + runHex + `-pres7" type="error" from="user@example.com" to="invalid@example.com"></presence>`,
 			expected: Presence{
-				ID:   fmt.Sprintf("%s-pres7", runUUID),
+				ID:   fmt.Sprintf("%s-pres7", runHex),
 				Type: PresenceTypeError,
 				From: "user@example.com",
 				To:   "invalid@example.com",
@@ -254,9 +254,9 @@ func testPresenceUnmarshal(t *testing.T) {
 		},
 		{
 			name: "probe presence type",
-			xml:  `<presence id="` + runUUID + `-pres8" type="probe" from="server@example.com" to="user@example.com"></presence>`,
+			xml:  `<presence id="` + runHex + `-pres8" type="probe" from="server@example.com" to="user@example.com"></presence>`,
 			expected: Presence{
-				ID:   fmt.Sprintf("%s-pres8", runUUID),
+				ID:   fmt.Sprintf("%s-pres8", runHex),
 				Type: PresenceTypeProbe,
 				From: "server@example.com",
 				To:   "user@example.com",

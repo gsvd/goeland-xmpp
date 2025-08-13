@@ -20,8 +20,21 @@ type IQ struct {
 	From    string   `xml:"from,attr,omitempty"`
 	To      string   `xml:"to,attr,omitempty"`
 
-	// v0.1.0 - Supporting Bind only
-	Bind *Bind `xml:"urn:ietf:params:xml:ns:xmpp-bind bind,omitempty"`
+	// v0.1.0
+	Bind    *Bind         `xml:"urn:ietf:params:xml:ns:xmpp-bind bind,omitempty"`
+	Ping    *Ping         `xml:"urn:xmpp:ping ping,omitempty"`
+	Version *VersionQuery `xml:"jabber:iq:version query,omitempty"`
+}
+
+type Ping struct {
+	XMLName xml.Name `xml:"urn:xmpp:ping ping"`
+}
+
+type VersionQuery struct {
+	XMLName xml.Name `xml:"jabber:iq:version query"`
+	Name    string   `xml:"name,omitempty"`
+	Version string   `xml:"version,omitempty"`
+	OS      string   `xml:"os,omitempty"`
 }
 
 type Bind struct {
@@ -36,12 +49,9 @@ const (
 	IQTypeResult IQType = "result"
 	IQTypeError  IQType = "error"
 
-	NSRoster     = "jabber:iq:roster"
-	NSDiscoInfo  = "http://jabber.org/protocol/disco#info"
-	NSDiscoItems = "http://jabber.org/protocol/disco#items"
-	NSPing       = "urn:xmpp:ping"
-	NSVCard      = "vcard-temp"
-	NSBind       = "urn:ietf:params:xml:ns:xmpp-bind"
+	NSPing    = "urn:xmpp:ping"
+	NSVersion = "jabber:iq:version"
+	NSBind    = "urn:ietf:params:xml:ns:xmpp-bind"
 )
 
 var (
@@ -65,7 +75,7 @@ func NewIQ(t IQType, opts ...IQOption) (*IQ, error) {
 	}
 
 	iq := &IQ{
-		ID:   id.New(),
+		ID:   id.NewUUID(),
 		Type: t,
 	}
 
@@ -99,30 +109,28 @@ func WithIQTo(to string) IQOption {
 	}
 }
 
-func WithBindResource(resource string) IQOption {
+func WithPing() IQOption {
 	return func(iq *IQ) {
-		if iq.Bind == nil {
-			iq.Bind = &Bind{}
-		}
-		iq.Bind.Resource = resource
+		iq.Ping = &Ping{}
 	}
 }
 
-func WithBindAddress(a address.Address) IQOption {
+func WithVersion(name, version, os string) IQOption {
 	return func(iq *IQ) {
-		if iq.Bind == nil {
-			iq.Bind = &Bind{}
+		iq.Version = &VersionQuery{
+			Name:    name,
+			Version: version,
+			OS:      os,
 		}
-		iq.Bind.Address = a.String()
 	}
 }
 
-func WithBindAddressStr(a string) IQOption {
+func WithBind(resource string, address address.Address) IQOption {
 	return func(iq *IQ) {
-		if iq.Bind == nil {
-			iq.Bind = &Bind{}
+		iq.Bind = &Bind{
+			Resource: resource,
+			Address:  address.String(),
 		}
-		iq.Bind.Address = a
 	}
 }
 

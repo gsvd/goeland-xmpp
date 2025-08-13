@@ -30,24 +30,6 @@ var (
 
 type Option func(*Address)
 
-func WithLocal(local string) Option {
-	return func(a *Address) {
-		a.local = local
-	}
-}
-
-func WithDomain(domain string) Option {
-	return func(a *Address) {
-		a.domain = domain
-	}
-}
-
-func WithResource(resource string) Option {
-	return func(a *Address) {
-		a.resource = resource
-	}
-}
-
 func New(opts ...Option) (*Address, error) {
 	a := &Address{}
 
@@ -112,6 +94,24 @@ func MustParse(addr string) *Address {
 	}
 
 	return address
+}
+
+func WithLocal(local string) Option {
+	return func(a *Address) {
+		a.local = local
+	}
+}
+
+func WithDomain(domain string) Option {
+	return func(a *Address) {
+		a.domain = domain
+	}
+}
+
+func WithResource(resource string) Option {
+	return func(a *Address) {
+		a.resource = resource
+	}
 }
 
 func decompose(addr string) (local string, domain string, resource string, err error) {
