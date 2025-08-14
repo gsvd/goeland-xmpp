@@ -10,6 +10,8 @@ import (
 	"golang.org/x/net/idna"
 )
 
+type Option func(*Address)
+
 type Address struct {
 	local    string
 	domain   string
@@ -27,8 +29,6 @@ var (
 	ErrMissingLocalPart    = errors.New("missing local part")
 	ErrMissingDomainPart   = errors.New("missing domain part")
 )
-
-type Option func(*Address)
 
 func New(opts ...Option) (*Address, error) {
 	a := &Address{}

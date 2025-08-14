@@ -8,7 +8,7 @@
 - [x] Message stanza (basic send/receive, marshal/unmarshal) (RFC 6121, RFC 6120)
 - [x] Message type support: chat, groupchat, headline, normal, error
 - [x] Presence stanza (send/receive, marshal/unmarshal, types, show, status, priority)
-- [x] IQ stanza (bind, types, marshal/unmarshal)
+- [x] IQ stanza (bind, ping, version, types, marshal/unmarshal)
 - [x] Unit tests for address, message, presence, and IQ stanzas
 
 ### Features to implement
@@ -16,7 +16,6 @@
 - [ ] XMPP stream handling (open/close XML streams, <stream:stream> root)
 - [ ] TCP connection to XMPP server (connect, send/receive XML)
 - [ ] Basic authentication (SASL PLAIN or ANONYMOUS)
-- [ ] IQ stanza (ping, version)
 - [ ] Basic event loop (read/write stanzas, dispatch handlers)
 - [ ] Error handling for stream and stanza parsing
 - [ ] Minimal example: connect, authenticate, send/receive message, presence
